@@ -1,0 +1,60 @@
+---
+- name: Configure Docker image
+  hosts: localhost
+  become: yes
+
+  vars:
+    docker_image_name: "aodiploma/chilla"
+    docker_image_tag_prefix: "v"
+    docker_counter_file: "/jenkins/chilla/version_counter.txt"
+    docker_container_name: "aodiploma/chilla"
+    docker_ports:
+      - "443:443"
+      - "80:80"
+    docker_file_path: "/jenkins/chilla"
+
+  tasks:
+  - name: Read the current version counter
+    command: cat {{ docker_counter_file }}
+    register: version_counter
+
+  - name: Increment the version counter
+    set_fact:
+      docker_image_tag: "{{ docker_image_tag_prefix }}{{ version_counter.stdout | int + 1 }}"
+
+  - name: Update the version counter file
+    copy:
+      content: "{{ docker_image_tag | regex_replace('^v', '') }}"
+      dest: "{{ docker_counter_file }}"
+
+  - name: Build Docker image from Dockerfile
+    docker_image:
+      name: "{{ docker_image_name }}"
+      tag: "{{ docker_image_tag }}"
+      source: build
+      build:
+        path: "{{ docker_file_path }}"
+
+#  - name: Check the running container
+#    shell: "docker ps -q -f name=chilla"
+#    register: container_running
+#    ignore_errors: True
+
+#  - name: Stop running container
+#    docker_container:
+#      name: "chilla"
+#      state: stopped
+#    when: container_running.stdout != ""
+
+#  - name: Delete running container
+#    docker_container:
+#      name: "chilla"
+#      state: absent
+#    when: container_running.stdout != ""
+
+#  - name: Run Docker container
+#    docker_container:
+#      name: "chilla"
+#      image: "{{ docker_image_name }}:{{ docker_image_tag }}"
+#      state: started
+#      ports: "{{ docker_ports }}"
