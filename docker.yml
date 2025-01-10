@@ -7,7 +7,6 @@
   vars:
     build: v2
     
-
   tasks:
 
     - name: Delete running containers
