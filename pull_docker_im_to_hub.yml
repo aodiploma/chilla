@@ -1,0 +1,28 @@
+---
+- name: Configure Docker image
+  hosts: localhost
+  become: yes
+
+  vars:
+    docker_image_name: "aodiploma/chilla"
+    docker_image_tag_prefix: "v"
+    docker_counter_file: "/jenkins/chilla/version_counter.txt"
+    docker_container_name: "aodiploma/chilla"
+    docker_ports:
+      - "443:443"
+      - "80:80"
+    docker_file_path: "/jenkins/chilla"
+
+
+  tasks:
+- name: Login to DockerHub
+  shell: echo "0pikun1904!" | docker login -u "aodiploma" --password-stdin
+  no_log: true
+
+- name: Push Docker image to DockerHub
+  command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
+  register: docker_push
+  
+- name: Remove local Docker image
+  command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
+  ignore_errors: yes
