@@ -13,16 +13,19 @@
       - "80:80"
     docker_file_path: "/jenkins/chilla"
 
-
   tasks:
-- name: Login to DockerHub
-  shell: echo "0pikun1904!" | docker login -u "aodiploma" --password-stdin
-  no_log: true
-
-- name: Push Docker image to DockerHub
-  command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
-  register: docker_push
+  - name: Read the current version counter
+    command: cat {{ docker_counter_file }}
+    register: version_counter
   
-- name: Remove local Docker image
-  command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
-  ignore_errors: yes
+  - name: Login to DockerHub
+    shell: echo "0pikun1904!" | docker login -u "aodiploma" --password-stdin
+    no_log: true
+
+  - name: Push Docker image to DockerHub
+    command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ version_counter }}
+    register: docker_push
+  
+#  - name: Remove local Docker image
+#    command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
+#    ignore_errors: yes
