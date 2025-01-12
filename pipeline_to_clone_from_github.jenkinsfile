@@ -4,7 +4,6 @@ pipeline {
         skipDefaultCheckout(true)
             }
   
-
     stages {
         
         stage('Cleaning workspace') {
@@ -33,11 +32,6 @@ pipeline {
 //                echo "**************** Deploying web site is completed ***************************"
 //                    }  
 //            }
-
-
-
-
-
 
     	}
 		
