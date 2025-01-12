@@ -13,8 +13,7 @@ pipeline {
 //                echo "**************** Ping at AWS is completed ***************************"
 //                    }    
         
-        
-        
+               
         
         
          stage('Deploying web site from docker image at AWS') {
