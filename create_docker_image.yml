@@ -35,6 +35,7 @@
       build:
         path: "{{ docker_file_path }}"
 
+
 #  - name: Check the running container
 #    shell: "docker ps -q -f name=chilla"
 #    register: container_running
