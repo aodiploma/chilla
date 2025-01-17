@@ -13,7 +13,7 @@ pipeline {
                sh "rm -Rf /jenkins/.git"
                echo "**************** cleaning is completed ***************************"
                     }
-        }
+   	     }
         
         stage('Cloning from Github') {
             steps {
@@ -26,13 +26,15 @@ pipeline {
 
 
  
-       stage('Create docker image') {
-            steps {
-                echo "**************** Start create docker image ***************************"
-                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml -u andrii"
-                echo "**************** Finish creating docker image ***************************"
-                    }  
-            }
+//       stage('Create docker image') {
+//            steps {
+//                echo "**************** Start create docker image ***************************"
+//                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml -u andrii"
+//                echo "**************** Finish creating docker image ***************************"
+//                    }  
+//            }
+
+
 
 	}
 		
