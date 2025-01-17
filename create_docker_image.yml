@@ -13,7 +13,6 @@
       - "80:80"
     docker_file_path: "/jenkins/chilla"
 
-
   tasks:
   - name: Read the current version counter
     command: cat {{ docker_counter_file }}
