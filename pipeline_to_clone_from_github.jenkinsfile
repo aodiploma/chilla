@@ -22,7 +22,7 @@ pipeline {
                echo "**************** Cloning from Hithub is completed ***************************"
                     }
             }
-       
+// add text       
  
 //       stage('Create docker image') {
 //            steps {
