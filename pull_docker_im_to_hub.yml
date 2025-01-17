@@ -35,6 +35,7 @@
       msg: "Docker push failed."
     when: docker_push.rc != 0
 
+
   
 #  - name: Remove local Docker image
 #    command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
