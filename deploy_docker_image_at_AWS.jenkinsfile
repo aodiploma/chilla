@@ -19,7 +19,7 @@ pipeline {
          stage('Deploying web site from docker image at AWS') {
             steps {
                 echo "**************** Start deploying docker at AWS ***************************"
-                sh "ansible-playbook /jenkins/chilla/docker.yml -u ubuntu"
+                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml -u ubuntu"
                 echo "**************** Deploying docker at AWS is completed ***************************"
                     }  
 
