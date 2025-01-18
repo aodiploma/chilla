@@ -6,12 +6,6 @@
   become_user: ubuntu
 
   tasks:
-    - name: Install jq
-      apt:
-        name: jq
-        state: present
-        update_cache: yes
-
     - name: Get list of Docker tags
       shell: curl -s https://registry.hub.docker.com/v1/repositories/aodiploma/chilla/tags | jq -r '.[].name' | sort -V
       register: docker_tags
