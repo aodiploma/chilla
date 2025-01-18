@@ -20,4 +20,4 @@
       command: docker pull aodiploma/chilla:{{ build }}
 
     - name: Run Docker image
-      command: docker run -d -p 80:80 aodiploma/chilla:{{ build }}
+      command: docker run -d -p 80:80 443:443 aodiploma/chilla:{{ build }}
