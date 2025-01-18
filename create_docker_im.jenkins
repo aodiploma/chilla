@@ -29,9 +29,19 @@ pipeline {
        stage('Create docker image') {
             steps {
                 echo "**************** Start create docker image ***************************"
-                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml -u andrii"
+                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
                 echo "**************** Finish creating docker image ***************************"
                     }  
+            }
+
+       stage('Push docker image to Dockerhub') {
+            steps {
+                echo "**************** Start pushing docker image ***************************"
+                sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
+                echo "**************** Finish pushing docker image ***************************"
+                    }
+
+
             }
 
 
