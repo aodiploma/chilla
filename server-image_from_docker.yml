@@ -2,13 +2,17 @@
 - name: Configure WebServers with Docker
   hosts: 13.61.155.21
   gather_facts: false
-  become: True
-  become_user: ubuntu
+  become: true
+  become_user: root
 
   tasks:
     - name: Get list of Docker tags
-      shell: curl -s https://registry.hub.docker.com/v1/repositories/aodiploma/chilla/tags | jq -r '.[].name' | sort -V
+      shell: curl -s https://hub.docker.com/v2/repositories/aodiploma/chilla/tags/?page_size=100 | jq -r '.results[].name' | sort -V
       register: docker_tags
+
+    - name: Debug Docker tags
+      debug:
+        msg: "{{ docker_tags.stdout }}"
 
     - name: Fail if no Docker tags found
       fail:
@@ -26,7 +30,7 @@
       shell: docker rmi -f $(docker images --all --quiet)    
 
     - name: Pull latest Docker image
-      command: docker pull aodiploma/chilla:{{ latest_tag }}
+      command: docker pull aodiploma/chilla:v{{ latest_tag }}
 
     - name: Run Docker image
-      command: docker run -d -p 80:80 -p 443:443 aodiploma/chilla:{{ latest_tag }}
+      command: docker run -d -p 80:80 -p 443:443 aodiploma/chilla:v{{ latest_tag }}
