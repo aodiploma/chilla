@@ -30,7 +30,7 @@
       shell: docker rmi -f $(docker images --all --quiet)    
 
     - name: Pull latest Docker image
-      command: docker pull aodiploma/chilla:v{{ latest_tag }}
+      command: docker pull aodiploma/chilla:{{ latest_tag }}
 
     - name: Run Docker image
-      command: docker run -d -p 80:80 -p 443:443 aodiploma/chilla:v{{ latest_tag }}
+      command: docker run -d -p 80:80 -p 443:443 aodiploma/chilla:{{ latest_tag }}
