@@ -4,8 +4,15 @@
   gather_facts: false
   become: True
   become_user: ubuntu
-    
+
   tasks:
+    - name: Get list of Docker tags
+      shell: curl -s https://registry.hub.docker.com/v1/repositories/aodiploma/chilla/tags | jq -r '.[].name' | sort -V
+      register: docker_tags
+
+    - name: Find the latest Docker tag
+      set_fact:
+        latest_tag: "{{ docker_tags.stdout_lines | last }}"
 
     - name: Delete running containers
       shell: docker rm -f $(docker ps --all --quiet)
@@ -13,9 +20,8 @@
     - name: Delete all Docker Images
       shell: docker rmi -f $(docker images --all --quiet)    
 
-
-    - name: Pull Docker image
-      command: docker pull aodiploma/chilla:latest
+    - name: Pull latest Docker image
+      command: docker pull aodiploma/chilla:{{ latest_tag }}
 
     - name: Run Docker image
-      command: docker run -d -p 80:80 443:443 aodiploma/chilla:latest
+      command: docker run -d -p 80:80 -p 443:443 aodiploma/chilla:{{ latest_tag }}
