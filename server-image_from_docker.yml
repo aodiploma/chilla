@@ -5,7 +5,7 @@
   become: True
   become_user: ubuntu
   vars:
-    docker_counter_file: "/jenkins/chilla/version_counter.txt"
+    docker_counter_file: "version_counter.txt"
     
   tasks:
     - name: Read the current version counter
@@ -23,7 +23,7 @@
       shell: docker rmi -f $(docker images --all --quiet)    
 
     - name: Pull Docker image
-      command: docker pull aodiploma/chilla:{{ build }}
+      command: docker pull aodiploma/chilla:v{{ build }}
 
     - name: Run Docker image
       command: docker run -d -p 80:80 443:443 aodiploma/chilla:v{{ build }}
