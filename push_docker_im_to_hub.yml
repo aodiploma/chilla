@@ -37,6 +37,6 @@
 
 
   
-#  - name: Remove local Docker image
-#    command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ new_version }}
-#    ignore_errors: yes
+  - name: Remove local Docker image
+    command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
+    ignore_errors: yes
