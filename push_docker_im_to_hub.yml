@@ -38,5 +38,5 @@
 
   
   - name: Remove local Docker image
-    command: docker rmi {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
+    command: docker rmi -f {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
     ignore_errors: yes
