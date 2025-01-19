@@ -23,10 +23,7 @@ pipeline {
                     }
             }
 
-
-
- 
-       stage('Create docker image') {
+	stage('Create docker image') {
             steps {
                 echo "**************** Start create docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
@@ -34,17 +31,19 @@ pipeline {
                     }  
             }
 
-       stage('Push docker image to Dockerhub') {
+        stage('Push docker image to Dockerhub') {
             steps {
                 echo "**************** Start pushing docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
                 echo "**************** Finish pushing docker image ***************************"
                     }
-
-
             }
 
-
+	stage('Commit and Push version_counter.txt') { 
+	    steps { 
+		echo "**************** Start commit and push version_counter.txt ***************************"
+		sh "git add version_counter.txt git commit -m "Update version_counter.txt" git push origin main"
+		echo "**************** Finish commit and push version_counter.txt ***************************"
 
 	}
 		
