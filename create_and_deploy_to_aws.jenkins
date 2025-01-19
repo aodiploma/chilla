@@ -6,7 +6,7 @@ pipeline {
   
     stages {
         
-        stage( 'Cleaning workspace' ) {
+        stage('Cleaning workspace') {
             steps {
                echo "**************** Start cleaning ***************************"
                sh "rm -Rf /jenkins/*"
@@ -15,7 +15,7 @@ pipeline {
                     }
    	     }
         
-        stage( 'Cloning from Github' ) {
+        stage('Cloning from Github') {
             steps {
                echo "**************** Start cloning from Github ***************************"
                sh "git clone -b main git@github.com:aodiploma/chilla.git /jenkins/chilla"
@@ -23,7 +23,7 @@ pipeline {
                     }
             }
 
-	    stage( 'Create docker image' ) {
+	stage('Create docker image') {
             steps {
                 echo "**************** Start create docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
@@ -31,7 +31,7 @@ pipeline {
                     }  
             }
 
-        stage( 'Push docker image to Dockerhub' ) {
+        stage('Push docker image to Dockerhub') {
             steps {
                 echo "**************** Start pushing docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
@@ -39,20 +39,20 @@ pipeline {
                     }
             }
 
-      	stage( 'Commit and Push version_counter.txt' ) { 
-	          steps { 
-            		echo "**************** Start commit and push version_counter.txt ***************************"
-            		sh "git add version_counter.txt git commit -m "Update version_counter.txt" git push origin main"
-	            	echo "**************** Finish commit and push version_counter.txt ***************************"
-                }		
+      	stage('Commit and Push version_counter.txt') { 
+	    steps { 
+            	 echo "**************** Start commit and push version_counter.txt ***************************"
+            	 sh "git add version_counter.txt git commit -m "Update version_counter.txt" git push origin main"
+	         echo "**************** Finish commit and push version_counter.txt ***************************"
+                    }		
             }  
             
-        stage( 'Deploying web site from docker image at AWS' ) {
+        stage('Deploying web site from docker image at AWS') {
             steps {
                 echo "**************** Start deploying docker at AWS ***************************"
                 sh "ansible-playbook /jenkins/chilla/server-image_from_docker.yml -u ubuntu"
                 echo "**************** Deploying docker at AWS is completed ***************************"
                     }  
-                }
+             }
         }
 }
