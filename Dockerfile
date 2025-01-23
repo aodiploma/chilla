@@ -1,6 +1,9 @@
 FROM ubuntu/apache2
 COPY ./index.html /var/www/html/index.html
-COPY ./Untitled-2.png /var/www/html/Untitled-2.png
+COPY ./images/v533_48.png /var/www/html/images/v533_48.png
+COPY ./images/v533_52.png /var/www/html/images/v533_52.png
+COPY ./images/v533_59.png /var/www/html/images/v533_59.png
+COPY ./images/v533_64.png /var/www/html/images/v533_64.png
 COPY ./localhost.crt /etc/ssl/certs/localhost.crt
 COPY ./localhost.key /etc/ssl/private/localhost.key
 COPY ./my-httpd-vhosts.conf /etc/apache2/sites-available/my-ssl.conf
