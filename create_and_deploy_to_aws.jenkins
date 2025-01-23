@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+            }
+  
+    stages {
+        
+        stage('Cleaning workspace') {
+            steps {
+               echo "**************** Start cleaning ***************************"
+               sh "rm -Rf /jenkins/*"
+               sh "rm -Rf /jenkins/.git"
+               echo "**************** cleaning is completed ***************************"
+                    }
+   	     }
+        
+        stage('Cloning from Github') {
+            steps {
+               echo "**************** Start cloning from Github ***************************"
+               sh "git clone -b main git@github.com:aodiploma/chilla.git /jenkins/chilla"
+               echo "**************** Cloning from Hithub is completed ***************************"
+                    }
+            }
+
+	stage('Create docker image') {
+            steps {
+                echo "**************** Start create docker image ***************************"
+                sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
+                echo "**************** Finish creating docker image ***************************"
+                    }  
+            }
+
+        stage('Push docker image to Dockerhub') {
+            steps {
+                echo "**************** Start pushing docker image ***************************"
+                sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
+                echo "**************** Finish pushing docker image ***************************"
+                    }
+            }
+
+      	stage('Commit and Push version_counter.txt') { 
+	    steps { 
+            	 echo "**************** Start commit and push version_counter.txt ***************************"
+            	 sh '''
+			cd /jenkins/chilla
+			git add version_counter.txt
+		 	git commit -m "Update version_counter.txt"
+		 	git push origin main
+		 '''
+	         echo "**************** Finish commit and push version_counter.txt ***************************"
+                    }		
+            }  
+            
+        stage('Deploying web site from docker image at AWS') {
+            steps {
+                echo "**************** Start deploying docker at AWS ***************************"
+                sh "ansible-playbook /jenkins/chilla/server-image_from_docker.yml -u ubuntu"
+                echo "**************** Deploying docker at AWS is completed ***************************"
+                    }  
+             }
+        }
+}
