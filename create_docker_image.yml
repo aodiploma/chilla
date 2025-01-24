@@ -10,7 +10,7 @@
     docker_container_name: "aodiploma/chilla"
     docker_ports:
       - "443:443"
-      - "80:80"
+   
     docker_file_path: "/jenkins/chilla"
 
   tasks:
@@ -34,32 +34,3 @@
       source: build
       build:
         path: "{{ docker_file_path }}"
-
-
-
-
-#  - name: Check the running container
-#    shell: "docker ps -q -f name=chilla"
-#    register: container_running
-#    ignore_errors: True
-
-#  - name: Stop running container
-#    docker_container:
-#      name: "chilla"
-#      state: stopped
-#    when: container_running.stdout != ""
-
-#  - name: Delete running container
-#    docker_container:
-#      name: "chilla"
-#      state: absent
-#    when: container_running.stdout != ""
-
-#  - name: Run Docker container
-#    docker_container:
-#      name: "chilla"
-#      image: "{{ docker_image_name }}:{{ docker_image_tag }}"
-#      state: started
-#      ports: "{{ docker_ports }}"
-
-
