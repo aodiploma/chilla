@@ -1,5 +1,6 @@
 FROM ubuntu/apache2
 COPY ./index.html /var/www/html/index.html
+COPY ./css/main.css /var/www/html/css/main.css
 COPY ./images/v533_48.png /var/www/html/images/v533_48.png
 COPY ./images/v533_52.png /var/www/html/images/v533_52.png
 COPY ./images/v533_59.png /var/www/html/images/v533_59.png
