@@ -30,7 +30,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Cleaning workspace') {
             when {
                 expression { env.CHANGES_FOUND == "true" }
@@ -53,7 +53,7 @@ pipeline {
                 echo "**************** Cloning from GitHub is completed ***************************"
             }
         }
-
+*/
         stage('Create docker image') {
             when {
                 expression { env.CHANGES_FOUND == "true" }
