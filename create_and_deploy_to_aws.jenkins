@@ -33,8 +33,7 @@ pipeline {
                     def changes = sh(script: 'cd /jenkins/chilla && git status --porcelain', returnStdout: true).trim()
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
-                        currentBuild.result = 'SUCCESS'
-                        return
+                        error('No changes detected in GitHub')
                     } else {
                         echo "Changes detected in GitHub. Proceeding with the pipeline."
                     }
