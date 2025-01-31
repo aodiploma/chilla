@@ -26,8 +26,11 @@ pipeline {
             steps {
                 script {
                     echo "**************** Checking for changes in GitHub ***************************"
-                    sh 'git fetch origin'
-                    def changes = sh(script: 'git status --porcelain', returnStdout: true).trim()
+                    sh '''
+                        cd /jenkins/chilla
+                        git fetch origin
+                    '''
+                    def changes = sh(script: 'cd /jenkins/chilla && git status --porcelain', returnStdout: true).trim()
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
                         currentBuild.result = 'SUCCESS'
@@ -38,13 +41,6 @@ pipeline {
                 }
             }
         }
-
-
-
-
-
-
-
 
 	stage('Create docker image') {
             steps {
