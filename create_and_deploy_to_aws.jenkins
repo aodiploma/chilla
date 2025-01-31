@@ -27,6 +27,9 @@ stage('Check for changes in GitHub') {
         }
 
         stage('Cleaning workspace') {
+	    when {
+                expression { return false }
+            }
             steps {
                echo "**************** Start cleaning ***************************"
                sh "rm -Rf /jenkins/*"
@@ -36,6 +39,9 @@ stage('Check for changes in GitHub') {
    	     }
         
         stage('Cloning from Github') {
+	    when {
+                expression { return false }
+            }
             steps {
                echo "**************** Start cloning from Github ***************************"
                sh "git clone -b main git@github.com:aodiploma/chilla.git /jenkins/chilla"
@@ -45,6 +51,9 @@ stage('Check for changes in GitHub') {
 	
 
 	stage('Create docker image') {
+	    when {
+                expression { return false }
+            }
             steps {
                 echo "**************** Start create docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
@@ -53,6 +62,9 @@ stage('Check for changes in GitHub') {
             }
 
         stage('Push docker image to Dockerhub') {
+	    when {
+                expression { return false }
+            }
             steps {
                 echo "**************** Start pushing docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
@@ -60,7 +72,10 @@ stage('Check for changes in GitHub') {
                     }
             }
 
-      	stage('Commit and Push version_counter.txt') { 
+      	stage('Commit and Push version_counter.txt') {
+	    when {
+                expression { return false }
+            }
 	    steps { 
             	 echo "**************** Start commit and push version_counter.txt ***************************"
             	 sh '''
@@ -74,6 +89,9 @@ stage('Check for changes in GitHub') {
             }  
             
         stage('Deploying web site from docker image at AWS') {
+	    when {
+                expression { return false }
+            }
             steps {
                 echo "**************** Start deploying docker at AWS ***************************"
                 sh "ansible-playbook /jenkins/chilla/server-image_from_docker.yml -u ubuntu"
