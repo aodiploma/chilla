@@ -5,18 +5,19 @@ pipeline {
             }
   
     stages {
-	stage('Check for changes in GitHub') {
+        stage('Check for changes in GitHub') {
             steps {
                 script {
                     echo "**************** Checking for changes in GitHub ***************************"
-                    sh '''
+                    def changes = sh(script: '''
                         cd /jenkins/chilla
                         git fetch origin
-                    '''
-                    def changes = sh(script: 'cd /jenkins/chilla && git status --porcelain', returnStdout: true).trim()
+                        git diff origin/main --name-only
+                    ''', returnStdout: true).trim()
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
-                        error('No changes detected in GitHub')
+                        currentBuild.result = 'SUCCESS'
+                        return
                     } else {
                         echo "Changes detected in GitHub. Proceeding with the pipeline."
                     }
