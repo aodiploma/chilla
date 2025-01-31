@@ -4,9 +4,12 @@ pipeline {
         skipDefaultCheckout(true)
             }
   
+    environment {
+        CHANGES_FOUND = 'false'
+    }
+  
     stages {
-	
-stage('Check for changes in GitHub') {
+        stage('Check for changes in GitHub') {
             steps {
                 script {
                     echo "**************** Checking for changes in GitHub ***************************"
@@ -18,9 +21,10 @@ stage('Check for changes in GitHub') {
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
                         currentBuild.result = 'SUCCESS'
-                        sh 'exit 0'
+                        return
                     } else {
                         echo "Changes detected in GitHub. Proceeding with the pipeline."
+                        env.CHANGES_FOUND = 'true'
                     }
                 }
             }
