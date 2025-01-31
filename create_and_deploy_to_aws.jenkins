@@ -5,7 +5,23 @@ pipeline {
             }
   
     stages {
-        
+	stage('Check for changes in GitHub') {
+            steps {
+                script {
+                    echo "**************** Checking for changes in GitHub ***************************"
+                    def changes = sh(script: 'git fetch origin && git diff origin/main --name-only', returnStdout: true).trim()
+                    if (changes == '') {
+                        echo "No changes detected in GitHub. Exiting the pipeline."
+                        currentBuild.result = 'SUCCESS'
+                        error('No changes detected')
+                    } else {
+                        echo "Changes detected in GitHub. Proceeding with the pipeline."
+                    }
+                }
+            }
+        }
+
+
         stage('Cleaning workspace') {
             steps {
                echo "**************** Start cleaning ***************************"
