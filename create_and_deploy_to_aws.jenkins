@@ -5,7 +5,8 @@ pipeline {
             }
   
     stages {
-        stage('Check for changes in GitHub') {
+	
+	stage('Check for changes in GitHub') {
             steps {
                 script {
                     echo "**************** Checking for changes in GitHub ***************************"
@@ -16,7 +17,7 @@ pipeline {
                     ''', returnStdout: true).trim()
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
-                        currentBuild.result = 'SUCCESS'
+                        currentBuild.result = 'NOT_BUILT'
                         return
                     } else {
                         echo "Changes detected in GitHub. Proceeding with the pipeline."
