@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        SERVER_URL = "http://chilla.pp.ua"
+    }
+/*
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "**************** Cloning repository ***************************"
+                git url: 'git@github.com:aodiploma/chilla.git', branch: 'main'
+                echo "**************** Repository cloned ***************************"
+            }
+        }
+*/
+        stage('Run nmap scan') {
+            steps {
+                echo "**************** Running nmap scan ***************************"
+                sh "nmap -sV $SERVER_URL -oN nmap_results.txt"
+                echo "**************** nmap scan completed ***************************"
+            }
+        }
+
+        stage('Run Nikto scan') {
+            steps {
+                echo "**************** Running Nikto scan ***************************"
+                sh "nikto -h $SERVER_URL -o nikto_results.txt"
+                echo "**************** Nikto scan completed ***************************"
+            }
+        }
+
+        stage('Run OWASP ZAP scan') {
+            steps {
+                echo "**************** Running OWASP ZAP scan ***************************"
+                sh "zap-cli quick-scan --self-contained $SERVER_URL > zap_results.txt"
+                echo "**************** OWASP ZAP scan completed ***************************"
+            }
+        }
+
+        stage('Run Burp Suite scan') {
+            steps {
+                echo "**************** Running Burp Suite scan ***************************"
+                sh "burp -aC -n -c burp_scan.json -u $SERVER_URL"
+                echo "**************** Burp Suite scan completed ***************************"
+            }
+        }
+
+        stage('Archive scan results') {
+            steps {
+                echo "**************** Archiving scan results ***************************"
+                archiveArtifacts artifacts: '*.txt, *.json', allowEmptyArchive: true
+                echo "**************** Scan results archived ***************************"
+            }
+        }
+    }
+}
