@@ -4,10 +4,6 @@ pipeline {
         skipDefaultCheckout(true)
     }
 
-    environment {
-        CHANGES_FOUND = "false"
-    }
-
     stages {
         stage('Check for changes in GitHub') {
             steps {
@@ -20,21 +16,17 @@ pipeline {
                     ''', returnStdout: true).trim()
                     if (changes == '') {
                         echo "No changes detected in GitHub. Exiting the pipeline."
-                        env.CHANGES_FOUND = "false"
+                        currentBuild.result = 'SUCCESS'
                         return
                     } else {
-                        echo "Changes detected in GitHub. Pulling latest changes."
-                        sh 'cd /jenkins/chilla && git pull origin main'
-                        env.CHANGES_FOUND = "true"
+                        echo "Changes detected in GitHub."
+                        
                     }
                 }
             }
         }
-/*
+        
         stage('Cleaning workspace') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start cleaning ***************************"
                 sh "rm -Rf /jenkins/*"
@@ -44,20 +36,14 @@ pipeline {
         }
         
         stage('Cloning from GitHub') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start cloning from GitHub ***************************"
                 sh "git clone -b main git@github.com:aodiploma/chilla.git /jenkins/chilla"
                 echo "**************** Cloning from GitHub is completed ***************************"
             }
         }
-*/
+
         stage('Create docker image') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start create docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
@@ -66,9 +52,6 @@ pipeline {
         }
 
         stage('Push docker image to Dockerhub') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start pushing docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
@@ -77,9 +60,6 @@ pipeline {
         }
 
         stage('Commit and Push version_counter.txt') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start commit and push version_counter.txt ***************************"
                 sh '''
@@ -93,9 +73,6 @@ pipeline {
         }
 
         stage('Deploying web site from docker image at AWS') {
-            when {
-                expression { env.CHANGES_FOUND == "true" }
-            }
             steps {
                 echo "**************** Start deploying docker at AWS ***************************"
                 sh "ansible-playbook /jenkins/chilla/server-image_from_docker.yml -u ubuntu"
