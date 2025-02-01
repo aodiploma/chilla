@@ -1,23 +1,18 @@
 pipeline {
     agent any
-    options {
-        skipDefaultCheckout(true)
-    }
-
     environment {
-        SERVER_URL = "chilla.pp.ua"
+        SERVER_URL = 'chilla.pp.ua'
     }
-
     stages {
-/*
-        stage('Checkout') {
+        stage('Check nmap') {
             steps {
-                echo "**************** Cloning repository ***************************"
-                git url: 'git@github.com:aodiploma/chilla.git', branch: 'main'
-                echo "**************** Repository cloned ***************************"
+                script {
+                    if (sh(script: 'command -v nmap', returnStatus: true) != 0) {
+                        error 'nmap is not installed.'
+                    }
+                }
             }
         }
-*/
         stage('Run nmap scan') {
             steps {
                 echo "**************** Running nmap scan ***************************"
@@ -25,7 +20,15 @@ pipeline {
                 echo "**************** nmap scan completed ***************************"
             }
         }
-
+        stage('Check Nikto') {
+            steps {
+                script {
+                    if (sh(script: 'command -v nikto', returnStatus: true) != 0) {
+                        error 'Nikto is not installed.'
+                    }
+                }
+            }
+        }
         stage('Run Nikto scan') {
             steps {
                 echo "**************** Running Nikto scan ***************************"
@@ -33,7 +36,15 @@ pipeline {
                 echo "**************** Nikto scan completed ***************************"
             }
         }
-
+        stage('Check OWASP ZAP') {
+            steps {
+                script {
+                    if (sh(script: 'command -v zap-cli', returnStatus: true) != 0) {
+                        error 'OWASP ZAP (zap-cli) is not installed.'
+                    }
+                }
+            }
+        }
         stage('Run OWASP ZAP scan') {
             steps {
                 echo "**************** Running OWASP ZAP scan ***************************"
@@ -41,7 +52,15 @@ pipeline {
                 echo "**************** OWASP ZAP scan completed ***************************"
             }
         }
-
+        stage('Check Burp Suite') {
+            steps {
+                script {
+                    if (sh(script: 'command -v burp', returnStatus: true) != 0) {
+                        error 'Burp Suite is not installed.'
+                    }
+                }
+            }
+        }
         stage('Run Burp Suite scan') {
             steps {
                 echo "**************** Running Burp Suite scan ***************************"
@@ -49,7 +68,6 @@ pipeline {
                 echo "**************** Burp Suite scan completed ***************************"
             }
         }
-
         stage('Archive scan results') {
             steps {
                 echo "**************** Archiving scan results ***************************"
