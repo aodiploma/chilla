@@ -7,8 +7,9 @@ pipeline {
     environment {
         SERVER_URL = "http://chilla.pp.ua"
     }
-/*
+
     stages {
+/*
         stage('Checkout') {
             steps {
                 echo "**************** Cloning repository ***************************"
