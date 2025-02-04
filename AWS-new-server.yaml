@@ -34,8 +34,10 @@
         state: present
         update_cache: yes
 
-    - name: Start and enable Docker service
+    - name: Start Docker service
+      command: sudo systemctl start docker.service
+
+    - name: Enable Docker service
       systemd:
         name: docker
-        state: started
         enabled: yes
