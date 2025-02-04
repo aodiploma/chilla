@@ -3,7 +3,7 @@
   hosts: 54.157.42.117
   gather_facts: false
   become: true
-  become_user: ubuntu
+  become_user: root
 
   tasks:
     - name: Install Docker CE
