@@ -5,13 +5,14 @@
   become: true
   become_user: ubuntu
 
-  - name: Install Docker CE
+  tasks:
+    - name: Install Docker CE
       apt:
-        name: docker-ce
+        name: docker-io
         state: present
         update_cache: yes
 
-  - name: Start and enable Docker service
+    - name: Start and enable Docker service
       systemd:
         name: docker
         state: started
