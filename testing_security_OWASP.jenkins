@@ -3,14 +3,11 @@ pipeline {
     environment {
         SERVER_URL = 'chilla.pp.ua'
     }
-    stages {
-        stage('Check nmap') {
+    stage('CD to chilla dir') {
             steps {
-                script {
-                    if (sh(script: 'command -v nmap', returnStatus: true) != 0) {
-                        error 'nmap is not installed.'
-                    }
-                }
+                echo "**************** Running nmap scan ***************************"
+                sh "cd /jenkins/chilla"
+                echo "**************** nmap scan completed ***************************"
             }
         }
         stage('Run nmap scan') {
@@ -20,15 +17,7 @@ pipeline {
                 echo "**************** nmap scan completed ***************************"
             }
         }
-        stage('Check Nikto') {
-            steps {
-                script {
-                    if (sh(script: 'command -v nikto', returnStatus: true) != 0) {
-                        error 'Nikto is not installed.'
-                    }
-                }
-            }
-        }
+
         stage('Run Nikto scan') {
             steps {
                 echo "**************** Running Nikto scan ***************************"
@@ -36,44 +25,24 @@ pipeline {
                 echo "**************** Nikto scan completed ***************************"
             }
         }
-        stage('Check OWASP ZAP') {
+
+
+
+        stage('Commit and Push security check files') {
             steps {
-                script {
-                    if (sh(script: 'command -v zap-cli', returnStatus: true) != 0) {
-                        error 'OWASP ZAP (zap-cli) is not installed.'
-                    }
-                }
+                echo "**************** Start commit and push txt files ***************************"
+                sh '''
+                    cd /jenkins/chilla
+                    git add nmap_results.txt
+                    git commit -m "Update nmap_results.txt"
+                    git add nikto_results.txt
+                    git commit -m "Update nikto_results.txt"
+
+                    git push origin main
+                '''
+                echo "**************** Finish commit and push txt files ***************************"
             }
         }
-        stage('Run OWASP ZAP scan') {
-            steps {
-                echo "**************** Running OWASP ZAP scan ***************************"
-                sh "zap-cli quick-scan --self-contained $SERVER_URL > zap_results.txt"
-                echo "**************** OWASP ZAP scan completed ***************************"
-            }
-        }
-        stage('Check Burp Suite') {
-            steps {
-                script {
-                    if (sh(script: 'command -v burp', returnStatus: true) != 0) {
-                        error 'Burp Suite is not installed.'
-                    }
-                }
-            }
-        }
-        stage('Run Burp Suite scan') {
-            steps {
-                echo "**************** Running Burp Suite scan ***************************"
-                sh "burp -aC -n -c burp_scan.json -u $SERVER_URL"
-                echo "**************** Burp Suite scan completed ***************************"
-            }
-        }
-        stage('Archive scan results') {
-            steps {
-                echo "**************** Archiving scan results ***************************"
-                archiveArtifacts artifacts: '*.txt, *.json', allowEmptyArchive: true
-                echo "**************** Scan results archived ***************************"
-            }
-        }
-    }
+
+
 }
