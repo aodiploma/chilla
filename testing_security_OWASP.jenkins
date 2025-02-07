@@ -3,6 +3,7 @@ pipeline {
     environment {
         SERVER_URL = 'chilla.pp.ua'
     }
+    stages {
         stage('CD to chilla dir') {
             steps {
                 echo "**************** Running nmap scan ***************************"
@@ -43,6 +44,5 @@ pipeline {
                 echo "**************** Finish commit and push txt files ***************************"
             }
         }
-
-
+    }
 }
