@@ -3,7 +3,7 @@ pipeline {
     environment {
         SERVER_URL = 'chilla.pp.ua'
     }
-    stage('CD to chilla dir') {
+        stage('CD to chilla dir') {
             steps {
                 echo "**************** Running nmap scan ***************************"
                 sh "cd /jenkins/chilla"
