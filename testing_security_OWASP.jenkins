@@ -4,13 +4,7 @@ pipeline {
         SERVER_URL = 'chilla.pp.ua'
     }
     stages {
-        stage('CD to chilla dir') {
-            steps {
-                echo "**************** Running nmap scan ***************************"
-                sh "cd /jenkins/chilla"
-                echo "**************** nmap scan completed ***************************"
-            }
-        }
+
         stage('Run nmap scan') {
             steps {
                 echo "**************** Running nmap scan ***************************"
@@ -29,20 +23,6 @@ pipeline {
 
 
 
-        stage('Commit and Push security check files') {
-            steps {
-                echo "**************** Start commit and push txt files ***************************"
-                sh '''
-                    cd /jenkins/chilla
-                    git add nmap_results.txt
-                    git commit -m "Update nmap_results.txt"
-                    git add nikto_results.txt
-                    git commit -m "Update nikto_results.txt"
 
-                    git push origin main
-                '''
-                echo "**************** Finish commit and push txt files ***************************"
-            }
-        }
     }
 }
