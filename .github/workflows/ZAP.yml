@@ -31,18 +31,18 @@ jobs:
     - name: Build and push Docker image
       run: |
         docker build -t my-app:latest .
-        docker run -d -p 8080:8080 my-app:latest
+        docker run -d -p 8088:8088 my-app:latest
 
     - name: Pull OWASP ZAP Docker image
       run: docker pull zaproxy/zap-stable
 
     - name: Run OWASP ZAP scan
       run: |
-        docker run -v $(pwd):/zap/wrk/:rw -p 8080:8080 zaproxy/zap-stable zap.sh -daemon -port 8080
+        docker run -v $(pwd):/zap/wrk/:rw -p 8088:8088 zaproxy/zap-stable zap.sh -daemon -port 8088
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli status -t 120
-        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli open-url http://my-app:8080
-        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli spider http://my-app:8080
-        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli active-scan -r http://my-app:8080
+        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli open-url http://my-app:8088
+        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli spider http://my-app:8088
+        docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli active-scan -r http://my-app:8088
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli report -o /zap/wrk/report.html -f html
 
     - name: Upload ZAP report
