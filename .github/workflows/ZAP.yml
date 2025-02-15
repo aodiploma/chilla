@@ -2,4 +2,4 @@ steps:
   - name: ZAP Scan
     uses: zaproxy/action-full-scan@v0.12.0
     with:
-      target: 'https://www.chilla.pp.ua/'
+      target: 'https://www.chilla.pp.ua'0
