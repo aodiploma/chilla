@@ -38,7 +38,7 @@ jobs:
 
     - name: Run OWASP ZAP scan
       run: |
-        docker run -v $(pwd):/zap/wrk/:rw -p 8088:8088 zaproxy/zap-stable zap.sh -daemon -port 8088
+        docker run -v $(pwd):/zap/wrk/:rw -p 8089:8088 zaproxy/zap-stable zap.sh -daemon -port 8088
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli status -t 120
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli open-url http://my-app:8088
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli spider http://my-app:8088
