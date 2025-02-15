@@ -32,8 +32,17 @@ jobs:
     - name: Run OWASP ZAP scan
       run: |
         docker run --rm --network zap-network -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable zap.sh \
-        -cmd -quickurl http://my-app:8088 -quickprogress \
-        -report /zap/wrk/report.html
+        -cmd -quickurl http://my-app:8088 -quickprogress
+
+    - name: Run OWASP ZAP as daemon
+      run: |
+        docker run -d --name zap --network zap-network -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable zap.sh -daemon -host 0.0.0.0 -port 8089
+        sleep 15  # Дати ZAP трохи часу на старт
+
+    - name: Generate ZAP report
+      run: |
+        docker exec zap zap-cli report -o /zap/wrk/report.html -f html
+
 
 
     - name: Check if report exists
