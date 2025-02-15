@@ -24,11 +24,18 @@ jobs:
         id: read_version
         run: echo "::set-output name=VERSION::$(cat version_counter.txt)"
 
-      - name: Build and test Docker image
+      - name: Build Docker image
         run: |
           docker pull aodiploma/chilla:v${{ steps.read_version.outputs.VERSION }}
           docker build -t my-docker-image .
-          docker run my-docker-image run-tests
+
+      - name: List available commands in container
+        run: |
+          docker run --rm my-docker-image ls /usr/bin
+
+      - name: Run tests
+        run: |
+          docker run --rm my-docker-image run-tests
 
       - name: Generate HTML report
         run: |
