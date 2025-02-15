@@ -26,6 +26,17 @@ jobs:
 
       - name: Build and test Docker image
         run: |
-          docker pull aodiploma/chilla:v${{ steps.read_version.outputs.VERSION }}
+          docker pull aodiploma/chilla:${{ steps.read_version.outputs.VERSION }}
           docker build -t my-docker-image .
-          docker run my-docker-image test-command
+          docker run my-docker-image run-tests
+
+      - name: Generate HTML report
+        run: |
+          chmod +x generate_report.sh
+          ./generate_report.sh
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: report.html
