@@ -36,7 +36,7 @@ jobs:
           ./generate_report.sh
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: report.html
