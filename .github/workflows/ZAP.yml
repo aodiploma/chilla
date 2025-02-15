@@ -20,8 +20,12 @@ jobs:
         run: |
           docker version
 
+      - name: Read latest version tag
+        id: read_version
+        run: echo "::set-output name=VERSION::$(cat version_counter.txt)"
+
       - name: Build and test Docker image
         run: |
-          docker pull aodiploma/chilla:latest
+          docker pull aodiploma/chilla:v${{ steps.read_version.outputs.VERSION }}
           docker build -t my-docker-image .
           docker run my-docker-image test-command
