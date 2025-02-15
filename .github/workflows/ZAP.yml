@@ -46,7 +46,7 @@ jobs:
         docker exec $(docker ps -q -f ancestor=zaproxy/zap-stable) zap-cli report -o /zap/wrk/report.html -f html
 
     - name: Upload ZAP report
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: zap-report
         path: ./report.html
