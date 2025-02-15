@@ -32,10 +32,16 @@ jobs:
     - name: Run OWASP ZAP scan
       run: |
         docker run --rm --network zap-network -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable zap.sh \
-          -cmd -quickurl http://my-app:8088 -quickprogress
+        -cmd -quickurl http://my-app:8088 -quickprogress \
+        -report /zap/wrk/report.html
+
+
+    - name: Check if report exists
+      run: ls -lah report.html
 
     - name: Upload ZAP report
       uses: actions/upload-artifact@v4
       with:
         name: zap-report
-        path: report_html.html
+        path: report.html
+
