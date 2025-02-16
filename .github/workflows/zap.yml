@@ -7,6 +7,4 @@ jobs:
     name: Scan ZAP website
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.3.0
-        with:
-          target: 'https://www.zaproxy.org/'
+          docker run -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t https://www.chilla.pp.ua -r testreport.html
