@@ -1,6 +1,6 @@
 name: OWASP ZAP Scan
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   zap_scan:
@@ -31,30 +31,40 @@ jobs:
 
     - name: Run OWASP ZAP as daemon
       run: |
-        docker run -d --name zap --network zap-network -v $(pwd):/zap/wrk/:rw -u root zaproxy/zap-stable \
+        docker run -d --name zap --network zap-network -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable \
           zap.sh -daemon -host 0.0.0.0 -port 8089
-        sleep 30  # Дати ZAP час на запуск
+        sleep 10  # Дати ZAP трохи часу
+
+    - name: Check ZAP Logs (Debug)
+      run: docker logs zap || true  # Виведе логи контейнера ZAP для діагностики
 
     - name: Check if ZAP API is available
       run: |
-        until curl -s http://localhost:8089/OTHER/core/other/json/version/; do
-          echo "Waiting for ZAP to be available..."
-          sleep 5
+        for i in {1..10}; do
+          if curl -s http://zap:8089/OTHER/core/other/json/version/; then
+            echo "ZAP is available!"
+            exit 0
+          fi
+          echo "Waiting for ZAP to be available... Attempt $i"
+          sleep 10
         done
+        echo "ZAP did not start. Exiting."
+        docker logs zap  # Вивести логи перед виходом
+        exit 1
 
     - name: Start ZAP Spider Scan
       run: |
-        curl "http://localhost:8089/JSON/spider/action/scan/?url=http://my-app:8088&maxChildren=10"
+        curl "http://zap:8089/JSON/spider/action/scan/?url=http://my-app:8088&maxChildren=10"
         sleep 20  # Чекаємо завершення Spider Scan
 
     - name: Start ZAP Active Scan
       run: |
-        curl "http://localhost:8089/JSON/ascan/action/scan/?url=http://my-app:8088"
+        curl "http://zap:8089/JSON/ascan/action/scan/?url=http://my-app:8088"
         sleep 60  # Дати час на Active Scan
 
     - name: Generate ZAP report
       run: |
-        curl "http://localhost:8089/OTHER/core/other/htmlreport/" -o report.html
+        curl "http://zap:8089/OTHER/core/other/htmlreport/" -o report.html
 
     - name: Upload ZAP report
       uses: actions/upload-artifact@v4
