@@ -38,12 +38,15 @@ jobs:
     - name: Debug Docker Network
       run: docker network inspect zap-network || true  # Переконуємось, що всі контейнери в одній мережі
 
-    - name: Check ZAP Logs (Debug)
-      run: docker logs zap || true  # Виведе логи контейнера ZAP для діагностики
+    - name: Check Running Containers
+      run: docker ps  # Переконаємось, що `zap` і `my-app` запущені
+
+    - name: Check Open Ports in ZAP
+      run: docker exec zap netstat -tlnp || true  # Дивимося, чи реально слухає порт 8089
 
     - name: Test connection to ZAP inside Docker
       run: |
-        docker run --rm --network zap-network alpine wget -qO- http://zap:8089/OTHER/core/other/json/version/ \
+        docker run --rm --network zap-network byrnedo/alpine-curl -s http://zap:8089/OTHER/core/other/json/version/ \
           && echo "ZAP API is accessible inside the Docker network!" || echo "ZAP API is NOT accessible!"
 
     - name: Check if ZAP API is available
