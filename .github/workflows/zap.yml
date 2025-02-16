@@ -7,6 +7,10 @@ permissions:
   contents: read
   security-events: write
 
+env:
+  GITHUB_TOKEN: ${{ secrets.ZAP_TOKEN }}
+
+
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
@@ -20,9 +24,11 @@ jobs:
           target: 'https://www.chilla.pp.ua'
           fail_action: false  # Не провалювати завдання при знайдених вразливостях
           cmd_options: '-a'
+          
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
           name: ZAP-Report
           path: report/*
+          
