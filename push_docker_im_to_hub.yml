@@ -16,8 +16,9 @@
 
   tasks:
   - name: Read the current version counter
-    command: cat {{ docker_counter_file }}
-    register: version_counter
+      slurp:
+        src: "{{ docker_counter_file }}"
+      register: version_counter
 
   - name: Trim version counter value
     set_fact:
@@ -30,14 +31,15 @@
       reauthorize: yes
 
   - name: Push Docker image to DockerHub
-    command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
-    register: docker_push
-
-  - name: Check if Docker push was successful
-    fail:
-      msg: "Docker push failed."
-    when: docker_push.rc != 0
+    community.docker.docker_image:
+      name: "{{ docker_image_name }}"
+      tag: "{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}"
+      push: yes
+      source: local
 
   - name: Remove local Docker image
-    command: docker rmi -f {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
+    community.docker.docker_image:
+      name: "{{ docker_image_name }}"
+      tag: "{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}"
+      state: absent
     ignore_errors: yes
