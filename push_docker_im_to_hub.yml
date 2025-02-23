@@ -2,7 +2,7 @@
 - name: Configure Docker image
   hosts: localhost
   become: yes
-  become_user: jenkins
+  become_user: jenkins  
 
   vars:
     docker_image_name: "aodiploma/chilla"
@@ -14,35 +14,40 @@
       - "80:80"
     docker_file_path: "/jenkins/chilla"
     dockerhub_username: "aodiploma"
-    dockerhub_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
-
+    dockerhub_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"  
 
   tasks:
   - name: Read the current version counter
     command: cat {{ docker_counter_file }}
     register: version_counter
-  
+
   - name: Trim version counter value
     set_fact:
       trimmed_version_counter: "{{ version_counter.stdout | trim }}"
-  
+
   - name: Login to DockerHub
     community.docker.docker_login:
       username: "{{ dockerhub_username }}"
       password: "{{ dockerhub_password }}"
       reauthorize: yes
 
+  - name: Build Docker image from Dockerfile
+    community.docker.docker_image:
+      name: "{{ docker_image_name }}"
+      tag: "{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}"
+      source: build
+      build:
+        path: "{{ docker_file_path }}"
+
   - name: Push Docker image to DockerHub
     command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
     register: docker_push
-  
+
   - name: Check if Docker push was successful
     fail:
       msg: "Docker push failed."
     when: docker_push.rc != 0
 
-
-  
   - name: Remove local Docker image
     command: docker rmi -f {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
     ignore_errors: yes
