@@ -2,8 +2,8 @@
 - name: Configure Docker image
   hosts: localhost
   become: yes
-#  become_method: sudo
-#  become_user: andrii
+  become_method: sudo
+  become_user: jenkins
 
   vars:
     docker_image_name: "aodiploma/chilla"
