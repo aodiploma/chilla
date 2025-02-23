@@ -23,7 +23,7 @@
       trimmed_version_counter: "{{ version_counter.stdout | trim }}"
   
   - name: Login to DockerHub
-    shell: echo "0pikun1904!" | docker login -u "aodiploma" --password-stdin
+    shell: echo "$DOCKER_PASSWORD" | docker login -u "aodiploma" --password-stdin
     no_log: true
 
   - name: Push Docker image to DockerHub

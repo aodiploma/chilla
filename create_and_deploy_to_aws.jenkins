@@ -59,18 +59,18 @@ pipeline {
             }
         }
 
-        stage('Commit and Push version_counter.txt') {
-            steps {
-                echo "**************** Start commit and push version_counter.txt ***************************"
-                sh '''
-                    cd /jenkins/chilla
-                    git add version_counter.txt
-                    git commit -m "Update version_counter.txt"
-                    git push origin main
-                '''
-                echo "**************** Finish commit and push version_counter.txt ***************************"
-            }
-        }
+//        stage('Commit and Push version_counter.txt') {
+//            steps {
+//                echo "**************** Start commit and push version_counter.txt ***************************"
+//                sh '''
+//                    cd /jenkins/chilla
+//                    git add version_counter.txt
+//                    git commit -m "Update version_counter.txt"
+//                    git push origin main
+//                '''
+//                echo "**************** Finish commit and push version_counter.txt ***************************"
+//            }
+//       }
 
         stage('Deploying web site from docker image at AWS') {
             steps {

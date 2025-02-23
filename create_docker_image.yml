@@ -2,6 +2,8 @@
 - name: Configure Docker image
   hosts: localhost
   become: yes
+  become_method: sudo
+  become_user: andrii
 
   vars:
     docker_image_name: "aodiploma/chilla"
@@ -11,7 +13,7 @@
     docker_ports:
       - "443:443"
    
-    docker_file_path: "/jenkins/chilla"
+    docker_file_path: "/jenkins/chilla/site"
 
   tasks:
   - name: Read the current version counter
