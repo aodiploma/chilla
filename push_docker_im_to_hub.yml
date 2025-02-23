@@ -1,8 +1,7 @@
 ---
 - name: Configure Docker image
   hosts: localhost
-  become: yes
-  become_user: jenkins  
+  become: yes  
 
   vars:
     docker_image_name: "aodiploma/chilla"
@@ -12,7 +11,6 @@
     docker_ports:
       - "443:443"
       - "80:80"
-    docker_file_path: "/jenkins/chilla"
     dockerhub_username: "aodiploma"
     dockerhub_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"  
 
@@ -30,14 +28,6 @@
       username: "{{ dockerhub_username }}"
       password: "{{ dockerhub_password }}"
       reauthorize: yes
-
-#  - name: Build Docker image from Dockerfile
-#    community.docker.docker_image:
-#      name: "{{ docker_image_name }}"
-#      tag: "{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}"
-#      source: build
-#      build:
-#        path: "{{ docker_file_path }}"
 
   - name: Push Docker image to DockerHub
     command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
