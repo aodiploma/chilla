@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    stages {
+        
+        stage('Push docker image to Dockerhub') {
+            steps {
+                echo "**************** Start pushing docker image ***************************"
+                sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
+                echo "**************** Finish pushing docker image ***************************"
+                  }
+            }
+    }
+}
