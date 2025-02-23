@@ -12,8 +12,8 @@
     docker_ports:
       - "443:443"
       - "80:80"
-    dockerhub_username: "aodiploma"
-    dockerhub_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"  
+#    dockerhub_username: "aodiploma"
+#    dockerhub_password: "{{ lookup('env', 'DOCKER_PASSWORD') }}"  
 
   tasks:
   - name: Read the current version counter
@@ -26,11 +26,9 @@
       trimmed_version_counter: "{{ version_counter.content | b64decode | trim }}"
 
   - name: Login to DockerHub
-    community.docker.docker_login:
-      username: "{{ dockerhub_username }}"
-      password: "{{ dockerhub_password }}"
-      reauthorize: yes
-
+    shell: echo "0pikun1904!" | docker login -u "aodiploma" --password-stdin
+    no_log: true
+    
   - name: Push Docker image to DockerHub
     community.docker.docker_image:
       name: "{{ docker_image_name }}"
