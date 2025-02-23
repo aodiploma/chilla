@@ -25,7 +25,7 @@
   
   - name: Login to DockerHub
     shell: echo "$DOCKER_PASSWORD" | docker login -u "aodiploma" --password-stdin
-    no_log: true
+#    no_log: true
 
   - name: Push Docker image to DockerHub
     command: docker push {{ docker_image_name }}:{{ docker_image_tag_prefix }}{{ trimmed_version_counter }}
