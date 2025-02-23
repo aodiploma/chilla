@@ -1,11 +1,11 @@
 name: OWASP ZAP Scan
 
 on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 0 * * 1' # Every Monday
+  #push:
+  # branches:
+  #    - main
+  #schedule:
+  #  - cron: '0 0 * * 1' # Every Monday
 permissions:
   contents: read
   security-events: write
