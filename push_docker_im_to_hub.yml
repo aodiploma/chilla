@@ -23,7 +23,7 @@
 
   - name: Trim version counter value
     set_fact:
-      trimmed_version_counter: "{{ version_counter.stdout | trim }}"
+      trimmed_version_counter: "{{ version_counter.content | b64decode | trim }}"
 
   - name: Login to DockerHub
     community.docker.docker_login:
