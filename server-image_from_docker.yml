@@ -33,4 +33,4 @@
       command: docker pull aodiploma/chilla:{{ latest_tag }}
 
     - name: Run Docker image
-      command: docker run -d -p 443:443 aodiploma/chilla:{{ latest_tag }}
+      command: docker run -d -p 443:443 80:80 aodiploma/chilla:{{ latest_tag }}
