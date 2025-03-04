@@ -1,6 +1,6 @@
 ---
 - name: Configure WebServers with Docker
-  hosts: 54.157.42.117
+  hosts: 18.213.1.231
   gather_facts: false
   become: true
   become_user: root
