@@ -1,26 +1,35 @@
 pipeline {
     agent any
     environment {
-        SERVER_URL = 'chilla.pp.ua'
+        ZAP_DOCKER_IMAGE = 'owasp/zap2docker-stable'
+        TARGET_URL = 'http://35.214.164.86' //
+        REPORT_NAME = 'zap_report.html'
+        REPORT_PATH = '/jenkins/chilla'
     }
     stages {
-
-        stage('Run nmap scan') {
+               
+        stage('Start ZAP Scan') {
             steps {
-                echo "**************** Running nmap scan ***************************"
-                sh "nmap -sV $SERVER_URL -oN nmap_results.txt"
-                echo "**************** nmap scan completed ***************************"
+                script {
+                    sh """
+                    docker run --rm -v \$(pwd):/zap/wrk:rw \
+                        ${ZAP_DOCKER_IMAGE} zap-baseline.py -t ${TARGET_URL} -g gen.conf -r ${REPORT_NAME}
+                    """
+                }
             }
         }
-
-        stage('Run Nikto scan') {
+        
+        stage('Publish Report') {
             steps {
-                echo "**************** Running Nikto scan ***************************"
-                sh "nikto -h $SERVER_URL -o nikto_results.txt"
-                echo "**************** Nikto scan completed ***************************"
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: "${REPORT_PATH}",
+                    reportFiles: "${REPORT_NAME}",
+                    reportName: 'OWASP ZAP Security Report'
+                ])
             }
         }
-
-
     }
 }
