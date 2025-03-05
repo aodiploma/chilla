@@ -12,8 +12,9 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run --rm -v \$(pwd):/zap/wrk:rw \
-                        ${ZAP_DOCKER_IMAGE} zap-baseline.py -t ${TARGET_URL} -g gen.conf -r ${REPORT_NAME}
+                    docker run --rm \
+                        ${ZAP_DOCKER_IMAGE} zap-baseline.py -t ${TARGET_URL} -r ${REPORT_NAME} \
+                        -I -j --auto
                     """
                 }
             }
