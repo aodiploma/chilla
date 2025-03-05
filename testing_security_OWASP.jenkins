@@ -1,33 +1,41 @@
 pipeline {
     agent any
     environment {
-
-        TARGET_URL = 'http://35.214.164.86' //
+        TARGET_URL = 'http://35.214.164.86'
         REPORT_NAME = 'zap_report.html'
+        REPORT_PATH = '/jenkins/chilla'
     }
     stages {
-               
+
+        stage('Prepare Environment') {
+            steps {
+                script {
+                    sh "mkdir -p ${env.REPORT_PATH} && chmod 777 ${env.REPORT_PATH}"
+                }
+            }
+        }
+
         stage('Start ZAP Scan') {
             steps {
                 script {
                     sh """
-                    docker run --rm -v $(pwd):/zap/wrk/:rw \
-                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${TARGET_URL} -r zap_report.html \
+                    docker run --rm -v ${env.REPORT_PATH}:/zap/wrk/:rw \
+                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /zap/wrk/${env.REPORT_NAME} \
                         -g gen.conf \
                         -I -j --auto
                     """
                 }
             }
         }
-        
+
         stage('Publish Report') {
             steps {
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: "/jenkins/chilla",
-                    reportFiles: "zap_report.html",
+                    reportDir: "${env.REPORT_PATH}",
+                    reportFiles: "${env.REPORT_NAME}",
                     reportName: 'OWASP ZAP Security Report'
                 ])
             }
