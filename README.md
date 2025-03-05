@@ -1,4 +1,4 @@
-  Hi, I’m Andrii OPIKUN and this @aodiploma is made for CHILLA project.
+  Hi, I’m Andrii OPIKUN and this services is made for CHILLA project.
 -
  This project show an example of the teamwork on the topic "Clone of Ms Teams/Discord". I’m DevOps engineer and my part in this project: 
 - create a repository at GitHub
