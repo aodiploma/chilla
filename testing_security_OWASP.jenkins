@@ -1,10 +1,9 @@
 pipeline {
     agent any
     environment {
-        ZAP_DOCKER_IMAGE = 'zaproxy/zap-stable'
+
         TARGET_URL = 'http://35.214.164.86' //
         REPORT_NAME = 'zap_report.html'
-        REPORT_PATH = '/jenkins/chilla'
     }
     stages {
                
@@ -12,8 +11,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run --rm \
-                        ${ZAP_DOCKER_IMAGE} zap-baseline.py -t ${TARGET_URL} -r ${REPORT_NAME} \
+                    docker run --rm \ 
+                        -v $(pwd):/zap/wrk/:rw \
+                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${TARGET_URL} -r ${REPORT_NAME} \
+                        -g gen.conf \
                         -I -j --auto
                     """
                 }
@@ -26,7 +27,7 @@ pipeline {
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: "${REPORT_PATH}",
+                    reportDir: "/jenkins/chilla",
                     reportFiles: "${REPORT_NAME}",
                     reportName: 'OWASP ZAP Security Report'
                 ])
