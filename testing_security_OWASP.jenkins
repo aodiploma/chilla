@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        ZAP_DOCKER_IMAGE = 'owasp/zap2docker-stable'
+        ZAP_DOCKER_IMAGE = 'zaproxy/zap-stable'
         TARGET_URL = 'http://35.214.164.86' //
         REPORT_NAME = 'zap_report.html'
         REPORT_PATH = '/jenkins/chilla'
