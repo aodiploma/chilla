@@ -12,7 +12,7 @@ pipeline {
                 script {
                     sh """
                     docker run --rm -v $(pwd):/zap/wrk/:rw \
-                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${TARGET_URL} -r ${REPORT_NAME} \
+                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${TARGET_URL} -r zap_report.html \
                         -g gen.conf \
                         -I -j --auto
                     """
@@ -27,7 +27,7 @@ pipeline {
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: "/jenkins/chilla",
-                    reportFiles: "${REPORT_NAME}",
+                    reportFiles: "zap_report.html",
                     reportName: 'OWASP ZAP Security Report'
                 ])
             }
