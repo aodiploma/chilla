@@ -27,9 +27,10 @@ stages {
             steps {
                 echo "**************** Start check changes in GitHub ***************************"
                 script {
-                    dir('/jenkins/chilla') {  
+                    dir('/jenkins/chilla') {
+                        sh "git fetch origin ${GIT_BRANCH}" 
                         def remoteCommit = sh(
-                            script: "git ls-remote ${GIT_REPO} -h refs/heads/${GIT_BRANCH} | awk '{print \$1}'",
+                            script: "git ls-remote origin ${GIT_BRANCH} | awk '{print \$1}'",
                             returnStdout: true
                         ).trim()
 
@@ -37,11 +38,12 @@ stages {
                             script: 'git rev-parse HEAD',
                             returnStdout: true
                         ).trim()
-
+                        echo "Remote commit: ${remoteCommit}"
+                        echo "Local commit: ${localCommit}"
                         if (remoteCommit == localCommit) {
                             echo "******************* No changes detected. Exiting successfully **************"
                             currentBuild.result = 'SUCCESS'
-                            sh "exit 0"
+                            return
                         } else {
                             echo "************** Changes detected. Proceeding with the pipeline *******************"
                         }
