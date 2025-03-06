@@ -21,7 +21,7 @@ stages {
         stage('Check for changes') {
             steps {
                 script {
-                    dir('repo') {  
+                    dir('/jenkins/chilla') {  
                         def remoteCommit = sh(
                             script: "git ls-remote ${GIT_REPO} -h refs/heads/${GIT_BRANCH} | awk '{print \$1}'",
                             returnStdout: true
