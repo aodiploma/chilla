@@ -68,7 +68,7 @@ stages {
             steps {
                 echo "**************** Start commit and push version_counter.txt ***************************"
                 sh '''
-                    cd /jenkins/chilla
+                    cd ${WORK_DIR}
                     git add version_counter.txt
                     git commit -m "Update version_counter.txt"
                     git push origin main
@@ -91,7 +91,7 @@ stages {
             when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 script {
-                    sh "chmod 777 ${env.REPORT_PATH}"
+                    sh "chmod 777 ${env.WORK_DIR}"
                 }
             }
         }
@@ -102,7 +102,7 @@ stages {
                 echo "**************** Start ZAP scanning ***************************"
                 script {
                     sh """
-                    docker run --rm -v ${env.REPORT_PATH}:/zap/wrk/:rw \
+                    docker run --rm -v ${env.WORK_DIR}:/zap/wrk/:rw \
                         -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /zap/wrk/${env.REPORT_NAME} \
                         -g gen.conf \
                         -I -j --auto
@@ -119,7 +119,7 @@ stages {
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: "${env.REPORT_PATH}",
+                    reportDir: "${env.WORK_DIR}",
                     reportFiles: "${env.REPORT_NAME}",
                     reportName: 'OWASP ZAP Security Report'
                 ])
