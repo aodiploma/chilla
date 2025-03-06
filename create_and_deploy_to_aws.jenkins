@@ -27,6 +27,7 @@ stages {
             steps {
                 echo "**************** Start check changes in GitHub ***************************"
                 script {
+                    dir(WORK_DIR) {
                     def changedFiles = sh(script: 'git diff --name-only HEAD~1', returnStdout: true).trim().split('\n')
                     def hasChanges = changedFiles.any { it != 'version_counter.txt' }
 
@@ -36,7 +37,7 @@ stages {
                             return
                         } else {
                             echo "************** Changes detected. Proceeding with the pipeline *******************"
-                        
+                     }   
                     }
                 }
             }
