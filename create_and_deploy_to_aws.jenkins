@@ -112,9 +112,8 @@ stages {
         }
 
         stage('Publish Report') {
-            when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
-                echo "**************** Make ZAP Report ***************************"
+                echo "**************** Publish ZAP Report ***************************"
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
