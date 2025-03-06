@@ -35,7 +35,7 @@ stages {
                         if (remoteCommit == localCommit) {
                             echo "No changes detected. Exiting successfully."
                             currentBuild.result = 'SUCCESS'
-                            return  
+                            sh "exit 0"
                         } else {
                             echo "Changes detected. Proceeding with the pipeline."
                         }
