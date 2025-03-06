@@ -132,15 +132,17 @@ stages {
                 ])
             }
         }
-        post {
-            success {
-                script {
-                    if (currentBuild.result == 'SUCCESS') {
-                        echo "******** No changes detected, pipeline will exit **********"
-                        return
-                    }
+    }
+
+    post {
+        success {
+            script {
+                if (currentBuild.result == 'SUCCESS') {
+                echo "******** No changes detected, pipeline will exit **********"
+                return
                 }
             }
         }
     }
+
 }
