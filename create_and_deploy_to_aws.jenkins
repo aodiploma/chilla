@@ -8,7 +8,7 @@ pipeline {
         GIT_BRANCH = 'main'
         TARGET_URL = 'http://18.213.1.231'
         REPORT_NAME = 'zap_report.html'
-        REPORT_PATH = '/jenkins/chilla'
+        WORK_DIR = '/jenkins/chilla'
     }
 
 stages {
@@ -16,8 +16,8 @@ stages {
             steps {
                 echo "**************** Start clone repository ***************************"
                 script {
-                    sh 'rm -rf /jenkins/*'
-                    sh "git clone -b ${GIT_BRANCH} ${GIT_REPO} /jenkins/chilla"
+                    sh "rm -rf ${WORK_DIR}"
+                    sh "git clone -b ${GIT_BRANCH} ${GIT_REPO} ${WORK_DIR}"
                 }
                 echo "**************** Stop clone repository ***************************"
             }
@@ -27,19 +27,21 @@ stages {
             steps {
                 echo "**************** Start check changes in GitHub ***************************"
                 script {
-                    dir('/jenkins/chilla') {
+                    dir(WORK_DIR) {
                         sh "git fetch origin ${GIT_BRANCH}" 
                         def remoteCommit = sh(
-                            script: "git ls-remote origin ${GIT_BRANCH} | awk '{print \$1}'",
+                            script: "git rev-parse origin/${GIT_BRANCH}",
                             returnStdout: true
                         ).trim()
 
                         def localCommit = sh(
-                            script: 'git rev-parse HEAD',
+                            script: "git rev-parse HEAD",
                             returnStdout: true
                         ).trim()
+
                         echo "Remote commit: ${remoteCommit}"
                         echo "Local commit: ${localCommit}"
+
                         if (remoteCommit == localCommit) {
                             echo "******************* No changes detected. Exiting successfully **************"
                             currentBuild.result = 'SUCCESS'
