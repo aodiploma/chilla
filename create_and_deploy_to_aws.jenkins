@@ -36,7 +36,7 @@ stages {
                             return
                         } else {
                             echo "************** Changes detected. Proceeding with the pipeline *******************"
-                        }
+                        
                     }
                 }
             }
