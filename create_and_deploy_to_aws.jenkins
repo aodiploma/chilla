@@ -8,7 +8,8 @@ pipeline {
         GIT_BRANCH = 'main'
     }
 
-stage('Clone Repository') {
+stages {
+        stage('Clone Repository') {
             steps {
                 script {
                     sh 'rm -rf /jenkins/*'
