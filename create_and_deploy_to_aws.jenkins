@@ -3,41 +3,47 @@ pipeline {
     options {
         skipDefaultCheckout(true)
     }
+    environment {
+        GIT_REPO = 'git@github.com:aodiploma/chilla.git'
+        GIT_BRANCH = 'main'
+    }
 
-    stages {
+stage('Clone Repository') {
+            steps {
+                script {
+                    sh 'rm -rf /jenkins/*'
+                    sh "git clone -b ${GIT_BRANCH} ${GIT_REPO} /jenkins/chilla"
+                }
+            }
+        }
+
         stage('Check for changes') {
             steps {
                 script {
-                    def remoteCommit = sh(script: 'git ls-remote git@github.com:aodiploma/chilla.git -h refs/heads/main | awk \'{print $1}\'', returnStdout: true).trim()
-                    def localCommit = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    dir('repo') {  
+                        def remoteCommit = sh(
+                            script: "git ls-remote ${GIT_REPO} -h refs/heads/${GIT_BRANCH} | awk '{print \$1}'",
+                            returnStdout: true
+                        ).trim()
 
-                    if (remoteCommit == localCommit) {
-                        echo "No changes detected. Exiting successfully."
-                        currentBuild.result = 'SUCCESS'
-                        return
-                    } else {
-                        echo "Changes detected. Proceeding with the pipeline."
+                        def localCommit = sh(
+                            script: 'git rev-parse HEAD',
+                            returnStdout: true
+                        ).trim()
+
+                        if (remoteCommit == localCommit) {
+                            echo "No changes detected. Exiting successfully."
+                            currentBuild.result = 'SUCCESS'
+                            return
+                        } else {
+                            echo "Changes detected. Proceeding with the pipeline."
+                        }
                     }
                 }
             }
         }
         
-        stage('Cleaning workspace') {
-            steps {
-                echo "**************** Start cleaning ***************************"
-                sh "rm -Rf /jenkins/*"
-                sh "rm -Rf /jenkins/.git"
-                echo "**************** cleaning is completed ***************************"
-            }
-        }
-        
-        stage('Cloning from GitHub') {
-            steps {
-                echo "**************** Start cloning from GitHub ***************************"
-                sh "git clone -b main git@github.com:aodiploma/chilla.git /jenkins/chilla"
-                echo "**************** Cloning from GitHub is completed ***************************"
-            }
-        }
+
 
         stage('Create docker image') {
             steps {
