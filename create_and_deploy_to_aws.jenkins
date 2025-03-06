@@ -8,7 +8,7 @@ pipeline {
         stage('Check for changes') {
             steps {
                 script {
-                    def remoteCommit = sh(script: 'git ls-remote origin -h refs/heads/main | awk \'{print $1}\'', returnStdout: true).trim()
+                    def remoteCommit = sh(script: 'git ls-remote https://github.com/aodiploma/chilla.git -h refs/heads/main | awk \'{print $1}\'', returnStdout: true).trim()
                     def localCommit = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
 
                     if (remoteCommit == localCommit) {
