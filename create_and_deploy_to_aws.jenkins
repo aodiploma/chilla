@@ -122,6 +122,13 @@ stages {
                     reportFiles: "${env.REPORT_NAME}",
                     reportName: 'OWASP ZAP Security Report'
                 ])
+
+                sh '''
+                    cd ${WORK_DIR}
+                    git add ${REPORT_NAME}
+                    git commit -m "Update ZAP Report file"
+                    git push origin main
+                '''
             }
         }
     }
