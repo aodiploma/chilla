@@ -6,20 +6,26 @@ pipeline {
     environment {
         GIT_REPO = 'git@github.com:aodiploma/chilla.git'
         GIT_BRANCH = 'main'
+        TARGET_URL = 'http://18.213.1.231'
+        REPORT_NAME = 'zap_report.html'
+        REPORT_PATH = '/jenkins/chilla'
     }
 
 stages {
         stage('Clone Repository') {
             steps {
+                echo "**************** Start clone repository ***************************"
                 script {
                     sh 'rm -rf /jenkins/*'
                     sh "git clone -b ${GIT_BRANCH} ${GIT_REPO} /jenkins/chilla"
                 }
+                echo "**************** Stop clone repository ***************************"
             }
         }
 
         stage('Check for changes') {
             steps {
+                echo "**************** Start check changes in GitHub ***************************"
                 script {
                     dir('/jenkins/chilla') {  
                         def remoteCommit = sh(
@@ -33,11 +39,11 @@ stages {
                         ).trim()
 
                         if (remoteCommit == localCommit) {
-                            echo "No changes detected. Exiting successfully."
+                            echo "******************* No changes detected. Exiting successfully **************"
                             currentBuild.result = 'SUCCESS'
                             sh "exit 0"
                         } else {
-                            echo "Changes detected. Proceeding with the pipeline."
+                            echo "************** Changes detected. Proceeding with the pipeline *******************"
                         }
                     }
                 }
@@ -47,6 +53,7 @@ stages {
 
 
         stage('Create docker image') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 echo "**************** Start create docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/create_docker_image.yml"
@@ -55,6 +62,7 @@ stages {
         }
 
         stage('Push docker image to Dockerhub') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 echo "**************** Start pushing docker image ***************************"
                 sh "ansible-playbook /jenkins/chilla/push_docker_im_to_hub.yml"
@@ -63,6 +71,7 @@ stages {
         }
 
         stage('Commit and Push version_counter.txt') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 echo "**************** Start commit and push version_counter.txt ***************************"
                 sh '''
@@ -76,10 +85,61 @@ stages {
        }
 
         stage('Deploying web site from docker image at AWS') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 echo "**************** Start deploying docker at AWS ***************************"
                 sh "ansible-playbook /jenkins/chilla/server-image_from_docker.yml -u ubuntu"
                 echo "**************** Deploying docker at AWS is completed ***************************"
+            }
+        }
+    
+
+        stage('Prepare Environment') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
+            steps {
+                script {
+                    sh "chmod 777 ${env.REPORT_PATH}"
+                }
+            }
+        }
+
+        stage('Start ZAP Scan') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
+            steps {
+                echo "**************** Start ZAP scanning ***************************"
+                script {
+                    sh """
+                    docker run --rm -v ${env.REPORT_PATH}:/zap/wrk/:rw \
+                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /zap/wrk/${env.REPORT_NAME} \
+                        -g gen.conf \
+                        -I -j --auto
+                    """
+                }
+            }
+        }
+
+        stage('Publish Report') {
+            when { expression { currentBuild.result != 'SUCCESS' } }
+            steps {
+                echo "**************** Make ZAP Report ***************************"
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: "${env.REPORT_PATH}",
+                    reportFiles: "${env.REPORT_NAME}",
+                    reportName: 'OWASP ZAP Security Report'
+                ])
+            }
+        }
+        post {
+            success {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        echo "******** No changes detected, pipeline will exit **********"
+                        return
+                    }
+                }
             }
         }
     }
