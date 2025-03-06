@@ -5,22 +5,18 @@ pipeline {
     }
 
     stages {
-        stage('Check for changes in GitHub') {
+        stage('Check for changes') {
             steps {
                 script {
-                    echo "**************** Checking for changes in GitHub ***************************"
-                    def changes = sh(script: '''
-                        cd /jenkins/chilla
-                        git fetch origin
-                        git status --porcelain
-                    ''', returnStdout: true).trim()
-                    if (changes == '') {
-                        echo "No changes detected in GitHub. Exiting the pipeline."
+                    def remoteCommit = sh(script: 'git ls-remote origin -h refs/heads/main | awk \'{print $1}\'', returnStdout: true).trim()
+                    def localCommit = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+
+                    if (remoteCommit == localCommit) {
+                        echo "No changes detected. Exiting successfully."
                         currentBuild.result = 'SUCCESS'
                         return
                     } else {
-                        echo "Changes detected in GitHub."
-                        
+                        echo "Changes detected. Proceeding with the pipeline."
                     }
                 }
             }
@@ -59,18 +55,18 @@ pipeline {
             }
         }
 
-//        stage('Commit and Push version_counter.txt') {
-//            steps {
-//                echo "**************** Start commit and push version_counter.txt ***************************"
-//                sh '''
-//                    cd /jenkins/chilla
-//                    git add version_counter.txt
-//                    git commit -m "Update version_counter.txt"
-//                    git push origin main
-//                '''
-//                echo "**************** Finish commit and push version_counter.txt ***************************"
-//            }
-//       }
+        stage('Commit and Push version_counter.txt') {
+            steps {
+                echo "**************** Start commit and push version_counter.txt ***************************"
+                sh '''
+                    cd /jenkins/chilla
+                    git add version_counter.txt
+                    git commit -m "Update version_counter.txt"
+                    git push origin main
+                '''
+                echo "**************** Finish commit and push version_counter.txt ***************************"
+            }
+       }
 
         stage('Deploying web site from docker image at AWS') {
             steps {
