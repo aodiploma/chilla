@@ -140,7 +140,6 @@ stages {
                     reportFiles: "${env.REPORT_NAME}",
                     reportName: 'OWASP ZAP Security Report'
                 ])
-
                 
             }
         }
