@@ -91,7 +91,7 @@ stages {
             when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 script {
-                    sh "chmod 777 ${env.WORK_DIR}"
+                    sh "chmod 777 ${env.WORK_DIR} rm -rf ${REPORT_NAME}"
                 }
             }
         }
