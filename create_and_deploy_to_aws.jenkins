@@ -92,7 +92,7 @@ stages {
             steps {
                 script {
                     sh """
-                        rm -rf ${env.REPORT_NAME}
+                        //rm -rf ${env.REPORT_NAME}
                         mkdir -p ${env.WORK_DIR} && chmod 777 ${env.WORK_DIR} 
                         
                     """
@@ -114,20 +114,20 @@ stages {
                 }
             }
         }
-        stage('Upload Report to GitHub') {
-            when { expression { currentBuild.result != 'SUCCESS' } }
-            steps {
-                script {
-                    sh """
-                        cd ${WORK_DIR}
-                        git add ${REPORT_NAME}
-                        git commit -m "Update ZAP Report file"
-                        git push origin main
-                        
-                    """
-                }
-            }
-        }
+//        stage('Upload Report to GitHub') {
+//            when { expression { currentBuild.result != 'SUCCESS' } }
+//            steps {
+//                script {
+//                    sh """
+//                        cd ${WORK_DIR}
+//                        git add ${REPORT_NAME}
+//                        git commit -m "Update ZAP Report file"
+//                        git push origin main
+//                        
+//                    """
+//                }
+//            }
+//        }
 
         stage('Publish Report') {
             steps {
