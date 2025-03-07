@@ -107,7 +107,7 @@ stages {
                 script {
                     sh """
                     docker run --rm -v ${env.WORK_DIR}:/zap/wrk/:rw \
-                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /zap/wrk/${env.REPORT_NAME} \
+                        -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /jenkins/chilla/${env.REPORT_NAME} \
                         -g gen.conf \
                         -I -j --auto
                     cd ${WORK_DIR}
