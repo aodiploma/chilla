@@ -91,7 +91,10 @@ stages {
             when { expression { currentBuild.result != 'SUCCESS' } }
             steps {
                 script {
-                    sh "chmod 777 ${env.WORK_DIR} rm -rf ${REPORT_NAME}"
+                    sh """
+                        chmod 777 ${env.WORK_DIR} 
+                        rm -rf ${env.REPORT_NAME}
+                    """
                 }
             }
         }
@@ -106,6 +109,10 @@ stages {
                         -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t ${env.TARGET_URL} -r /zap/wrk/${env.REPORT_NAME} \
                         -g gen.conf \
                         -I -j --auto
+                    cd ${WORK_DIR}
+                    git add ${REPORT_NAME}
+                    git commit -m "Update ZAP Report file"
+                    git push origin main
                     """
                 }
             }
@@ -123,12 +130,7 @@ stages {
                     reportName: 'OWASP ZAP Security Report'
                 ])
 
-                sh '''
-                    cd ${WORK_DIR}
-                    git add ${REPORT_NAME}
-                    git commit -m "Update ZAP Report file"
-                    git push origin main
-                '''
+                
             }
         }
     }
