@@ -92,7 +92,7 @@ stages {
             steps {
                 script {
                     sh """
-                        //rm -rf ${env.REPORT_NAME}
+                        
                         mkdir -p ${env.WORK_DIR} && chmod 777 ${env.WORK_DIR} 
                         
                     """
